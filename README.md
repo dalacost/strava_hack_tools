@@ -11,9 +11,9 @@ This script doesn't download the original GPX file.  is just some a reconstructi
 
 When you aren't logged, and the activity is public, we can get 100 points only. Is not bad, but when you are logged and the activities is from a friend, we can get hundred of points (resulting a better GPX file). 
 
-now we don't suppont login. only we can create a GPX with 100 points. 
 
 usage: strava_traces_downloader.py [-h] -a ID_Number [-o output.gpx]
+                                   [-l username password]
 
 Download GPS Traces from Strava.
 
@@ -23,6 +23,25 @@ optional arguments:
                         ID of activity to download (default: None)
   -o output.gpx, --output output.gpx
                         name of GPX file output. (default: output.gpx)
+  -l username password, --login username password
+                        login with username and password (default: None)
+                        
+                        
+**Requeriments**
+you must need installed some libs. 
+ 
+ import sys
+ import urllib2, urllib
+ import json
+ import os
+ import shutil
+ import socket
+ import time
+ import datetime
+ from datetime import timedelta
+ import argparse
+ import requests
+
                         
                         
 
