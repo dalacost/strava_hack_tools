@@ -41,18 +41,24 @@ FOOT_FILE="</gpx>"
 #global session var
 LOGIN_SESSION = ''
 
-def save_as_gpx(activity_id,points, output_file):
+def save_as_gpx(activity_id,points,elevation_points, time_points, output_file):
 
 	 final_file = open(output_file, 'w')
 	 final_file.write(HEAD_FILE)
 	 final_file.write('<trk>\n')
 	 final_file.write('<name> Activity '+str(activity_id)+'</name>\n')
 	 final_file.write('<trkseg>\n')
+	 points_counter=0
 
 	 for point in points:
 		#not save 0,0 points, this are points inside of protection area. 
 		if not (str(point[0]) == '0.0') and not (str(point[1]) == '0.0'):
-			final_file.write('<trkpt lat="'+str(point[0])+'"'+' lon="'+str(point[1])+'">'+'</trkpt>\n')
+			final_file.write('\t<trkpt lat="'+str(point[0])+'"'+' lon="'+str(point[1])+'">\n')
+			final_file.write('\t\t<ele>'+str(elevation_points[points_counter])+'</ele>\n')
+#			final_file.write('\t\t<time>'+str(time_points[points_counter])+'</time>\n')
+			final_file.write('\t</trkpt>\n')
+		points_counter += 1
+
 
 	 final_file.write('</trkseg>\n')
 	 final_file.write('</trk>\n')
@@ -102,6 +108,7 @@ if __name__ == '__main__':
 	parser.add_argument('-ai','--activityinterval' , nargs=2,metavar=('IDstart', 'IDend'),type=int,default=('None','None'), help='A interval of activities. auto outputname, not compatible with output name file option')
 	parser.add_argument('-o','--output'   , metavar='output.gpx',default=DEFAULT_OUTPUT_FILE, help='name of GPX file output.')
 	parser.add_argument('-l','--login', nargs=2,metavar=('username', 'password'),default=('None','None'), help='login with username and password')
+	parser.add_argument('-v','--verbose', help='increase output verbosity', action='store_true')
 	args = parser.parse_args()
 
         login_username=args.login[0]
@@ -111,6 +118,7 @@ if __name__ == '__main__':
 
 
 	if str(args.activity) == 'None' and str(args.activityinterval[0]) == 'None':	
+		parser.print_help()
 		sys.exit("you must define -a or -ai")
 
         
@@ -133,7 +141,7 @@ if __name__ == '__main__':
 
         else:
 		print("Warning: USER NOT LOGIN, without login only we get traces in a very low quality.")
-    		user_filter = USER_FILTER
+#    		user_filter = USER_FILTER
 		login_ok=0
         
 	#re add session var after login.
@@ -144,20 +152,26 @@ if __name__ == '__main__':
 		if(str(args.activityinterval[0]) != 'None'):
 			output_file = str(activity_id_temp)+".gpx"
 
-		params = urllib.urlencode(zip(['streams[]'],['latlng']))
+#		params = urllib.urlencode([('streams[]', 'latlng'), ('streams[]', 'altitude'), ('streams[]', 'distance'), ('streams[]', 'time')])
+		params = urllib.urlencode([('streams[]', 'latlng'), ('streams[]', 'altitude'), ('streams[]', 'time')])
 
 		if login_ok > 0:			
 			query = session.get(STRAVA_PATH_STREAM +str(activity_id_temp)+'?'+ params).text
+			#debug 
+			if args.verbose:
+			   print "url:"+STRAVA_PATH_STREAM +str(activity_id_temp)+'?'+ params
 		else:
 			query = urllib2.urlopen(STRAVA_PATH_STREAM +str(activity_id_temp)+'?'+ params).read()
+			#debug 
+			if args.verbose:
+			   print "url:"+STRAVA_PATH_STREAM +str(activity_id_temp)+'?'+ params
 
 		query = json.loads(query)
 		if 'latlng' in query.keys():
-			save_as_gpx(activity_id_temp, query['latlng'], output_file)
+			save_as_gpx(activity_id_temp, query['latlng'], query['altitude'], query['time'], output_file)
 		else:
 			 print("Info: No data for Activity {0}", format(activity_id_temp))
 	    except (KeyboardInterrupt, SystemExit):
                 sys.exit()
             except:
                 print "Info: Can not get data for "+format(activity_id_temp)
-
