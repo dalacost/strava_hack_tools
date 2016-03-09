@@ -4,6 +4,7 @@ Strava hacks script collection
 I will uploading here my collections of scripts to get some hacks from Strava.... 
 
 ## Installing on MacOSX
+    sudo easy_install pip
     sudo pip install -r requirements.txt
 
 ### strava_traces_downloader.py
