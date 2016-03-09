@@ -47,7 +47,7 @@ Download multiple activities
 
 ### join_gpx_strava_files.py
 
-a fast way to join a lot of GPX files downloaded from mapillary if you use download_gpx_from_sequences.py , this is your second step for join  all in just one file. 
+a fast way to join a lot of GPX files downloaded from strava if you use strava_traces_downloader.py , this is your second step for join  all in just one file. 
 
     python join_gpx_strava_files.py [gpx_directory] [outputfile.gpx]
 
