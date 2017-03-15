@@ -17,7 +17,7 @@ with this script you can reconstruct a gpx file from the public strava activity 
 
 This script **doesn't download the original GPX file**.  is just some a reconstruction, and is not better than the original GPX File.
 
-When you aren't logged, and the activity is public, we can get 100 points only. Is not bad, but when you are logged and the activities is from a friend, we can get thousands of points (resulting a better GPX file). 
+Sometimes, When you aren't logged, and the activity is public, we can get 100 points only. Is not bad, but when you are logged and the activities is from a friend, we can get thousands of points (resulting a better GPX file). 
 
 
     usage: strava_traces_downloader.py [-h] [-a ID_Number] [-ai IDstart IDend]
