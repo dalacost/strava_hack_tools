@@ -7,6 +7,10 @@ I will uploading here my collections of scripts to get some hacks from Strava...
     sudo easy_install pip
     sudo pip install -r requirements.txt
 
+## Installing on Ubuntu/Debian
+    
+    sudo apt-get install  python-requests python-argparse python-dateutil
+    
 ### strava_traces_downloader.py
 
 with this script you can reconstruct a gpx file from the public strava activity information. without premium account or any else. 
