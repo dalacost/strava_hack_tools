@@ -1,5 +1,6 @@
 import sys
-import urllib3, urllib
+import urllib3
+import urllib
 import json
 import os
 import shutil
