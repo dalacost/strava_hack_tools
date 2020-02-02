@@ -59,7 +59,12 @@ def save_as_gpx(activity_id,points,elevation_points, time_points, started_unix_t
 		if not (str(point[0]) == '0.0') and not (str(point[1]) == '0.0'):
 			final_file.write('\t<trkpt lat="'+str(point[0])+'"'+' lon="'+str(point[1])+'">\n')
 			final_file.write('\t\t<ele>'+str(elevation_points[points_counter])+'</ele>\n')
-			final_file.write('\t\t<time>'+datetime.datetime.utcfromtimestamp(int(started_unix_time)+int(time_points[points_counter])).strftime('%Y-%m-%dT%H:%M:%SZ')+'</time>\n')
+			if not args.notime:
+				try:
+					final_file.write('\t\t<time>'+datetime.datetime.utcfromtimestamp(int(started_unix_time)+int(time_points[points_counter])).strftime('%Y-%m-%dT%H:%M:%SZ')+'</time>\n')
+				except ValueError:
+					print('We can\'t get time for this point. try -nt option.')
+					sys.exit(1)
 			final_file.write('\t</trkpt>\n')
 		points_counter += 1
 
@@ -116,6 +121,7 @@ if __name__ == '__main__':
 	parser.add_argument('-ai','--activityinterval' , nargs=2,metavar=('IDstart', 'IDend'),type=int,default=('None','None'), help='A interval of activities. auto outputname, not compatible with output name file option')
 	parser.add_argument('-o','--output'   , metavar='output.gpx',default=DEFAULT_OUTPUT_FILE, help='name of GPX file output.')
 	parser.add_argument('-l','--login', nargs=2,metavar=('username', 'password'),default=('None','None'), help='login with username and password')
+	parser.add_argument('-nt','--notime', help='download track without time parameters', action='store_true')
 	parser.add_argument('-v','--verbose', help='increase output verbosity', action='store_true')
 	args = parser.parse_args()
 
