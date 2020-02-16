@@ -1,7 +1,7 @@
 Strava hacks script collection
 ===============================
 
-I will uploading here my collections of scripts to get some hacks from Strava.... 
+I will uploading here my collections of scripts to get some hacks from Strava.... for python3
 
 ## Installing on MacOSX
     sudo easy_install pip
@@ -9,7 +9,9 @@ I will uploading here my collections of scripts to get some hacks from Strava...
 
 ## Installing on Ubuntu/Debian
     
-    sudo apt-get install  python-requests python-argparse python-dateutil
+    sudo apt install python3
+    sudo apt install python3-pip
+    sudo pip3 install -r requirements.txt
     
 ### strava_traces_downloader.py
 
@@ -22,9 +24,10 @@ Sometimes, When you aren't logged, and the activity is public, we can get 100 po
 
     usage: strava_traces_downloader.py [-h] [-a ID_Number] [-ai IDstart IDend]
                                        [-o output.gpx] [-l username password]
+                                       [-nt] [-v]
     
     Download GPS Traces from Strava.
-    
+        
     optional arguments:
       -h, --help            show this help message and exit
       -a ID_Number, --activity ID_Number
@@ -32,11 +35,15 @@ Sometimes, When you aren't logged, and the activity is public, we can get 100 po
       -ai IDstart IDend, --activityinterval IDstart IDend
                             A interval of activities. auto outputname, not
                             compatible with output name file option (default:
-                            None)
+                            ('None', 'None'))
       -o output.gpx, --output output.gpx
                             name of GPX file output. (default: output.gpx)
       -l username password, --login username password
-                            login with username and password (default: None)
+                            login with username and password (default: ('None',
+                            'None'))
+      -nt, --notime         download track without time parameters (default:
+                            False)
+      -v, --verbose         increase output verbosity (default: False)
 
 **EXAMPLES**
 
