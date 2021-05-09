@@ -12,6 +12,7 @@ import argparse
 import requests
 import traceback
 from bs4 import BeautifulSoup
+import dateutil.parser
 
 # This script can reconstruct a gpx track of a Strava activity from 
 # public information. 
@@ -29,7 +30,7 @@ from bs4 import BeautifulSoup
 #                        
 
 
-STRAVA_PATH_STREAM = 'http://www.strava.com/stream/'
+STRAVA_PATH_STREAM = 'http://www.strava.com/activities/'
 STRAVA_URL_LOGIN = 'https://www.strava.com/login'
 STRAVA_URL_SESSION = 'https://www.strava.com/session'
 STRAVA_ACTIVITIES_SESSION ='https://www.strava.com/activities/'
@@ -173,19 +174,20 @@ if __name__ == '__main__':
 			if login_ok > 0:
 				#debug
 				if args.verbose:
-					print('getting track data:'+str(STRAVA_PATH_STREAM)+str(activity_id_temp)+'?'+params)
+					print('getting track data:'+str(STRAVA_PATH_STREAM)+str(activity_id_temp)+'/streams?'+params)
 
-				query = session.get(STRAVA_PATH_STREAM +str(activity_id_temp)+'?'+ params).text
+				query = session.get(STRAVA_PATH_STREAM +str(activity_id_temp)+'/streams?'+ params).text
 				
 				#debug
 				if args.verbose:
 					print('getting starting date:'+str(STRAVA_ACTIVITIES_SESSION)+str(activity_id_temp))
 
 				r = session.get(STRAVA_ACTIVITIES_SESSION +str(activity_id_temp))
-				indice_inicio_linea =r.text.find('startDateLocal:')
-				indice_fin_linea=r.text[indice_inicio_linea:(indice_inicio_linea+100)].find(',\n')
-				started_date=r.text[indice_inicio_linea+16:indice_inicio_linea+indice_fin_linea]
-				
+				indice_inicio_linea =r.text.find('<time>')
+				indice_fin_linea=r.text[indice_inicio_linea:(indice_inicio_linea+100)].find('</time>')
+				started_date=r.text[indice_inicio_linea+7:indice_inicio_linea+indice_fin_linea]
+				started_date= dateutil.parser.parse(started_date, dayfirst=True).timestamp()
+
 				#debug
 				if args.verbose:
 					print('startDateLocal:'+str(started_date))
@@ -195,10 +197,10 @@ if __name__ == '__main__':
 			else:
 				#debug
 				if args.verbose:
-					print('getting track data:'+str(STRAVA_PATH_STREAM)+str(activity_id_temp)+'?'+params)
+					print('getting track data:'+str(STRAVA_PATH_STREAM)+str(activity_id_temp)+'/streams?'+params)
 
 				http = urllib3.PoolManager()
-				query = http.request('GET',STRAVA_PATH_STREAM +str(activity_id_temp)+'?'+ params)
+				query = http.request('GET',STRAVA_PATH_STREAM +str(activity_id_temp)+'/streams?'+ params)
 				query = query.data.decode('utf-8')
 				print("Warning: I can't get started date, so 1970 is setted, please check the file.")
 
