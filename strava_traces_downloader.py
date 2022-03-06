@@ -193,18 +193,34 @@ if __name__ == '__main__':
 					print('startDateLocal:'+str(started_date))
 
 				started_unix_time = started_date
+				
+				query = json.loads(query)
 
 			else:
 				#debug
 				if args.verbose:
-					print('getting track data:'+str(STRAVA_PATH_STREAM)+str(activity_id_temp)+'/streams?'+params)
+					print('getting track data:'+str(STRAVA_PATH_STREAM)+str(activity_id_temp))
 
 				http = urllib3.PoolManager()
-				query = http.request('GET',STRAVA_PATH_STREAM +str(activity_id_temp)+'/streams?'+ params)
-				query = query.data.decode('utf-8')
-				print("Warning: I can't get started date, so 1970 is setted, please check the file.")
+				query = http.request('GET',STRAVA_PATH_STREAM +str(activity_id_temp))
 
-			query = json.loads(query)
+				if query.status == 429:
+					raise Exception("Too many Request from Strava. Try again later.")
+					
+
+				query = query.data.decode('utf-8')
+					
+				public_data = BeautifulSoup(query, 'html.parser')
+				public_data_details = public_data.find('div', attrs={'data-react-class':'ActivityPublic'})
+				public_data_streams = public_data_details.attrs.get('data-react-props')
+				
+				query= json.loads(public_data_streams)
+				query= query['activity']['streams']
+
+				print("Warning: I can't get started date, so 1970 is setted, please check the file.")
+				query['time']=dict.fromkeys(range(len(query['altitude'])),0)
+				
+
 			if 'latlng' in query.keys():
 				save_as_gpx(activity_id_temp, query['latlng'], query['altitude'], query['time'],started_unix_time, output_file)
 			else:
