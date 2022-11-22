@@ -62,7 +62,39 @@ a fast way to join a lot of GPX files downloaded from strava if you use strava_t
 
     python join_gpx_strava_files.py [gpx_directory] [outputfile.gpx]
 
+### strava_kudos_tool.py
 
+This script can help you to give a lot kudos for your friends.
                         
                         
+    usage: strava_kudos_tool.py [-h] [-a ID_Number] [-fd UNIX_TIME] -l username password [-fl] [-nebr Number] [-ft FeedType] [-c CLUB_ID] [-v]
 
+    Strava Kudos Tool.
+
+    options:
+      -h, --help            show this help message and exit
+      -a ID_Number, --athlete ID_Number
+                              Filter by ID of Athlete to analyze, by default all feed is analyzed. (default: None)
+      -fd UNIX_TIME, --feeddeep UNIX_TIME
+                              Force a end of time for get the feed, define a UNIX TIME (default: None)
+      -l username password, --login username password
+                              Login with username and password (default: ('None', 'None'))
+      -fl, --forcelogin     Force a new login instead saved cookies. Warning, this option will destroy old credentials. (default: False)
+      -nebr Number, --numentriesbyrequest Number
+                              Number of entries asked for each request, by default this value is controlled by Strava. If even set a big number, 
+                              strava could rewrite it with the max value from server. (100 entries) (default: 0)
+      -ft FeedType, --feedtype FeedType
+                              Force a filter by feed type, by default this value is controlled by Strava (default: None)
+      -c CLUB_ID, --club CLUB_ID
+                              Use it with -ft option when 'club' feed type is used. (default: None)
+      -v, --verbose         increase output verbosity (default: False)
+
+**EXAMPLES**
+
+Give kudos for all your following feed.
+
+    python strava_kudos_tool.py -l youremail@domain.org yourpassword
+
+Give kudos for all activities in a specific club.
+
+    python strava_kudos_tool.py -l youremail@domain.org yourpassword -ft club -c 12345678

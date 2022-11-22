@@ -13,6 +13,7 @@ import requests
 import traceback
 from bs4 import BeautifulSoup
 import dateutil.parser
+from strava_hack_tools_common.login import Login
 
 # This script can reconstruct a gpx track of a Strava activity from 
 # public information. 
@@ -41,10 +42,6 @@ DEFAULT_OUTPUT_FILE='output.gpx'
 HEAD_FILE="<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>\n \
 <gpx xmlns=\"http://www.topografix.com/GPX/1/1\" creator=\"\" version=\"1.1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd\">\n"   
 FOOT_FILE="</gpx>"
-
-
-#global session var
-LOGIN_SESSION = ''
 
 def save_as_gpx(activity_id,points,elevation_points, time_points, started_unix_time, output_file):
 
@@ -76,45 +73,7 @@ def save_as_gpx(activity_id,points,elevation_points, time_points, started_unix_t
 	final_file.close()
 	print("Info: Activity {0} = {1} points in track. file: {2}".format(str(activity_id),len(points),output_file))
 
-def login(login_username, login_password):
-	# Start a session so we can have persistant cookies
-	global LOGIN_SESSION
-	session = requests.session()
-	r = session.get(STRAVA_URL_LOGIN)
-	soup = BeautifulSoup(r.content, 'html.parser')
 
-	get_details = soup.find('input', attrs={'name':'authenticity_token'})
-	authenticity_token = get_details.attrs.get('value')
-
-	#debug 
-	if args.verbose:
-		print('LOGIN TOKEN:'+authenticity_token)
-	
-	# This is the form data that the page sends when logging in
-	login_data = {
-		'email': login_username,
-		'password': login_password,
-		'utf8': '%E2%9C%93',
-		'authenticity_token':authenticity_token
-	}
-
-	# Authenticate
-	r = session.post(STRAVA_URL_SESSION, data=login_data)
-	#print r
-	
-	# Try accessing a page that requires you to be logged in
-	r = session.get('https://www.strava.com/dashboard')
-
-	LOGIN_SESSION = session
-
-	if int(r.text.find(STRAVA_LOGGED_OUT_FINGERPRINT)) >= 0:
-		return False
-	else:
-		return True
-	#print(r.text)
-	#print(session)
-
-	
 if __name__ == '__main__':
 
 	parser = argparse.ArgumentParser(description='Download GPS Traces from Strava.',formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -122,6 +81,8 @@ if __name__ == '__main__':
 	parser.add_argument('-ai','--activityinterval' , nargs=2,metavar=('IDstart', 'IDend'),type=int,default=('None','None'), help='A interval of activities. auto outputname, not compatible with output name file option')
 	parser.add_argument('-o','--output'   , metavar='output.gpx',default=DEFAULT_OUTPUT_FILE, help='name of GPX file output.')
 	parser.add_argument('-l','--login', nargs=2,metavar=('username', 'password'),default=('None','None'), help='login with username and password')
+	parser.add_argument('-fl','--forcelogin'	, help='Force a new login instead saved cookies. Warning, this option will destroy old credentials.'
+												, action='store_true')
 	parser.add_argument('-nt','--notime', help='download track without time parameters', action='store_true')
 	parser.add_argument('-v','--verbose', help='increase output verbosity', action='store_true')
 	args = parser.parse_args()
@@ -130,7 +91,12 @@ if __name__ == '__main__':
 	login_password=args.login[1]
 	output_file=args.output
 	login_ok=0
+	user_login = Login(args.verbose)
 
+	if args.forcelogin:
+		if args.verbose:
+			print('Force a new login...')
+		user_login.cookies_remove_from_disk(login_username)
 
 	if str(args.activity) == 'None' and str(args.activityinterval[0]) == 'None':	
 		parser.print_help()
@@ -147,7 +113,7 @@ if __name__ == '__main__':
 			activityinterval_stop  = args.activityinterval[1]	
 
 	if login_username != 'None':
-		if login(str(login_username),str(login_password)):
+		if user_login.login(str(login_username),str(login_password)):
 			print("Info: LOGIN OK.")
 			login_ok=1
 		else:
@@ -160,7 +126,7 @@ if __name__ == '__main__':
 		login_ok=0
         
 	#re add session var after login.
-	session = LOGIN_SESSION 
+	session = user_login.LOGIN_SESSION 
 
 	for activity_id_temp in range (activityinterval_start, activityinterval_stop+1):
 		try:
