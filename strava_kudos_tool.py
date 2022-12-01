@@ -25,14 +25,17 @@ from strava_hack_tools_common.login import Login
 #                        Force a end of time for get the feed, define a UNIX TIME (default: None)
 #  -l username password, --login username password
 #                        Login with username and password (default: ('None', 'None'))
-#  -fl, --forcelogin     Force a new login instead saved cookies. Warning, this option will destroy old credentials. (default: False)
+#  -fl, --forcelogin     Force a new login instead saved cookies. Warning, this option will destroy old credentials.
+#                        (default: False)
 #  -nebr Number, --numentriesbyrequest Number
-#                        Number of entries asked for each request, by default this value is controlled by Strava. If even set a big number, 
-#                        strava could rewrite it with the max value from server. (100 entries) (default: 0)
+#                        Number of entries asked for each request, by default this value is controlled by Strava. If
+#                        even set a big number, strava could rewrite it with the max value from server. (100 entries)
+#                        (default: 0)
 #  -ft FeedType, --feedtype FeedType
 #                        Force a filter by feed type, by default this value is controlled by Strava (default: None)
 #  -c CLUB_ID, --club CLUB_ID
 #                        Use it with -ft option when 'club' feed type is used. (default: None)
+#  -y, --yes             Yes to all (default: False)
 #  -v, --verbose         increase output verbosity (default: False)
 
 
@@ -94,7 +97,8 @@ if __name__ == '__main__':
 	parser.add_argument('-c','--club' 			, metavar='CLUB_ID'
 												, type=int
 												, help='Use it with -ft option when \'club\' feed type is used.')
-
+	parser.add_argument('-y','--yes'			, help='Yes to all'
+												, action='store_true')
 	parser.add_argument('-v','--verbose'		, help='increase output verbosity'
 												, action='store_true')
 	args = parser.parse_args()
@@ -122,9 +126,7 @@ if __name__ == '__main__':
 	user_login = Login(args.verbose)
 
 	if args.forcelogin:
-		if args.verbose:
-			print('Force a new login...')
-		user_login.cookies_remove_from_disk(login_username)
+		user_login.forcelogin(login_username)
 
 	#Check Login Option
 	if login_username != 'None':
@@ -249,9 +251,12 @@ if __name__ == '__main__':
 	#Reverse the Dict for give kudos from OLD to NEW
 	activities_for_kudos_dict=OrderedDict(reversed(list(activities_for_kudos_dict.items())))
 
-	data = input("do you want to give that "+str(len(activities_for_kudos_dict))+" kudos ? (y/n)")
+	if not args.yes:
+		data = input("do you want to give that "+str(len(activities_for_kudos_dict))+" kudos ? (y/n)")
+	else:
+		data = 'y'
 	
-	if data.lower() in ('y'):
+	if data.lower() in ('y') or args.yes:
 		givekudosall(activities_for_kudos_dict)
 		
 	else:

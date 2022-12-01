@@ -32,10 +32,7 @@ from strava_hack_tools_common.login import Login
 
 
 STRAVA_PATH_STREAM = 'http://www.strava.com/activities/'
-STRAVA_URL_LOGIN = 'https://www.strava.com/login'
-STRAVA_URL_SESSION = 'https://www.strava.com/session'
 STRAVA_ACTIVITIES_SESSION ='https://www.strava.com/activities/'
-STRAVA_LOGGED_OUT_FINGERPRINT = 'logged-out'
 DEFAULT_OUTPUT_FILE='output.gpx'
 
 #GPX Format
@@ -94,9 +91,7 @@ if __name__ == '__main__':
 	user_login = Login(args.verbose)
 
 	if args.forcelogin:
-		if args.verbose:
-			print('Force a new login...')
-		user_login.cookies_remove_from_disk(login_username)
+		user_login.forcelogin(login_username)
 
 	if str(args.activity) == 'None' and str(args.activityinterval[0]) == 'None':	
 		parser.print_help()
@@ -122,7 +117,6 @@ if __name__ == '__main__':
 
 	else:
 		print("Warning: USER NOT LOGIN, without login only we get traces in a very low quality.")
-#    		user_filter = USER_FILTER
 		login_ok=0
         
 	#re add session var after login.

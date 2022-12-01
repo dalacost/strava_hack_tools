@@ -4,11 +4,11 @@ from http.cookiejar import LWPCookieJar
 import os
 from bs4 import BeautifulSoup
 
-STRAVA_URL_LOGIN = 'https://www.strava.com/login'
-STRAVA_URL_SESSION = 'https://www.strava.com/session'
-STRAVA_ACTIVITIES_SESSION ='https://www.strava.com/activities/'
-STRAVA_LOGGED_OUT_FINGERPRINT = 'logged-out'
-COOKIE_FILE_DIR='.authdata'
+STRAVA_URL_LOGIN                = 'https://www.strava.com/login'
+STRAVA_URL_SESSION              = 'https://www.strava.com/session'
+STRAVA_ACTIVITIES_SESSION       = 'https://www.strava.com/activities/'
+STRAVA_LOGGED_OUT_FINGERPRINT   = 'logged-out'
+COOKIE_FILE_DIR                 = '.authdata'
 
 
 class Login:
@@ -43,6 +43,11 @@ class Login:
         file.close()
 
         return authenticity_token
+
+    def forcelogin(self, login_username):
+        if self.VERBOSE:
+            print('Force a new login...')
+        self.cookies_remove_from_disk(login_username)
 
     def login(self, login_username, login_password):
 

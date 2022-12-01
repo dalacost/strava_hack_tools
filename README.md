@@ -72,22 +72,25 @@ This script can help you to give a lot kudos for your friends.
     Strava Kudos Tool.
 
     options:
-      -h, --help            show this help message and exit
-      -a ID_Number, --athlete ID_Number
-                              Filter by ID of Athlete to analyze, by default all feed is analyzed. (default: None)
-      -fd UNIX_TIME, --feeddeep UNIX_TIME
-                              Force a end of time for get the feed, define a UNIX TIME (default: None)
-      -l username password, --login username password
-                              Login with username and password (default: ('None', 'None'))
-      -fl, --forcelogin     Force a new login instead saved cookies. Warning, this option will destroy old credentials. (default: False)
-      -nebr Number, --numentriesbyrequest Number
-                              Number of entries asked for each request, by default this value is controlled by Strava. If even set a big number, 
-                              strava could rewrite it with the max value from server. (100 entries) (default: 0)
-      -ft FeedType, --feedtype FeedType
-                              Force a filter by feed type, by default this value is controlled by Strava (default: None)
-      -c CLUB_ID, --club CLUB_ID
-                              Use it with -ft option when 'club' feed type is used. (default: None)
-      -v, --verbose         increase output verbosity (default: False)
+    -h, --help            show this help message and exit
+    -a ID_Number, --athlete ID_Number
+                            Filter by ID of Athlete to analyze, by default all feed is analyzed. (default: None)
+    -fd UNIX_TIME, --feeddeep UNIX_TIME
+                            Force a end of time for get the feed, define a UNIX TIME (default: None)
+    -l username password, --login username password
+                            Login with username and password (default: ('None', 'None'))
+    -fl, --forcelogin     Force a new login instead saved cookies. Warning, this option will destroy old credentials.
+                            (default: False)
+    -nebr Number, --numentriesbyrequest Number
+                            Number of entries asked for each request, by default this value is controlled by Strava. If
+                            even set a big number, strava could rewrite it with the max value from server. (100 entries)
+                            (default: 0)
+    -ft FeedType, --feedtype FeedType
+                            Force a filter by feed type, by default this value is controlled by Strava (default: None)
+    -c CLUB_ID, --club CLUB_ID
+                            Use it with -ft option when 'club' feed type is used. (default: None)
+    -y, --yes             yes to all (default: False)
+    -v, --verbose         increase output verbosity (default: False)
 
 **EXAMPLES**
 
@@ -98,3 +101,27 @@ Give kudos for all your following feed.
 Give kudos for all activities in a specific club.
 
     python strava_kudos_tool.py -l youremail@domain.org yourpassword -ft club -c 12345678
+
+### strava_photo_downloader.py
+
+Do you want to download all photos of your friends? no problem. 
+
+    usage: strava_photo_downloader.py [-h] -a ID_Number -l username password [-fl] [-y] [-v]
+    
+    Strava Photo Downloader Tool.
+    
+    options:
+      -h, --help            show this help message and exit
+      -a ID_Number, --athlete ID_Number
+                            ID of Athlete to analyze (default: None)
+      -l username password, --login username password
+                            Login with username and password (default: ('None', 'None'))
+      -fl, --forcelogin     Force a new login instead saved cookies. Warning, this option will destroy old credentials. (default: False)
+      -y, --yes             Yes to all (default: False)
+      -v, --verbose         increase output verbosity (default: False)
+
+**EXAMPLES**
+
+Download all photos of a friend from the feed
+
+    python strava_photo_downloader.py -l youremail@domain.org yourpassword -a 12345678
